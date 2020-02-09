@@ -1,0 +1,23 @@
+version: '2'
+
+x-build-opts: &x-build-opts
+  build:
+    context: .
+
+x-logging-opts: &x-logging-opts
+  logging:
+    driver: 'json-file'
+    options:
+      max-size: '20M'
+      max-file: '5'
+
+services:
+
+  crt-learning:
+    <<: *x-build-opts
+    <<: *x-logging-opts
+    container_name: ${NAME}
+    ports:
+      - '8888:8888/tcp'
+    volumes:
+      - './src:/home/jovyan:rw'
