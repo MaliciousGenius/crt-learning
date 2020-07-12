@@ -1,8 +1,8 @@
 version: '2'
 
-x-build-opts: &x-build-opts
-  build:
-    context: .
+# x-jupyter-build-opts: &x-jupyter-build-opts
+#   build:
+#     context: ./jupyter
 
 x-logging-opts: &x-logging-opts
   logging:
@@ -14,10 +14,43 @@ x-logging-opts: &x-logging-opts
 services:
 
   crt-learning:
-    <<: *x-build-opts
+    # <<: *x-jupyter-build-opts
     <<: *x-logging-opts
-    container_name: ${NAME}
+    image: jupyter/minimal-notebook
+    container_name: ${NAME}-jupyter
     ports:
       - '8888:8888/tcp'
     volumes:
-      - './src:/home/jovyan:rw'
+      - './scripts:/home/jovyan:rw'
+
+  redis:
+    <<: *x-logging-opts
+    image: redis
+    container_name: ${NAME}-redis
+    volumes:
+      - './redis:/data:rw'
+
+  postgres:
+    <<: *x-logging-opts
+    image: postgres
+    container_name: ${NAME}-postgres
+    environment:
+      POSTGRES_DB: superset
+      POSTGRES_PASSWORD: superset
+      POSTGRES_USER: superset
+    volumes:
+      - './postgres:/var/lib/postgresql/data:rw'
+
+  superset:
+    <<: *x-logging-opts
+    image: amancevice/superset
+    container_name: ${NAME}-superset
+    depends_on:
+      - postgres
+      - redis
+    # environment:
+    #   MAPBOX_API_KEY: ${MAPBOX_API_KEY}
+    ports:
+      - '8088:8088/tcp'
+    volumes:
+      - './superset:/etc/superset:rw'
