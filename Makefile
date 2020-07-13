@@ -23,3 +23,6 @@ clean:
 info:
 	@docker-compose logs
 	@docker-compose ps
+
+superset-init:
+	docker-compose exec superset superset-init

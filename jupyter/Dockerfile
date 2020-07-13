@@ -20,3 +20,5 @@ RUN apt-get autoremove --yes ; \
 
 # понижение привелегий
 USER $NB_UID
+
+# CMD ["jupyter", "notebook", "--no-browser","--NotebookApp.token=''","--NotebookApp.password=''"]

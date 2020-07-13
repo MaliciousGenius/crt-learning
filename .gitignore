@@ -1,3 +1,2 @@
-_*
-src/.*
-src/10.csv
+_mess
+data-*
