@@ -18,7 +18,8 @@ RUN apt-get autoremove --yes ; \
     apt-get clean ; \
     rm -rf /var/lib/apt/lists/* ;
 
+RUN pip install --upgrade pip ; \
+    pip install numpy pandas
+
 # понижение привелегий
 USER $NB_UID
-
-# CMD ["jupyter", "notebook", "--no-browser","--NotebookApp.token=''","--NotebookApp.password=''"]

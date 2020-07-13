@@ -24,3 +24,15 @@ services:
       - '8888:8888/tcp'
     volumes:
       - ./notebook:/home/jovyan
+
+  clickhouse:
+    <<: *x-logging-opts
+    image: yandex/clickhouse-server
+    container_name: ${NAME}-clickhouse
+    ports:
+      - 8123:8123
+      - 9000:9000
+    volumes:
+      - ./ch-conf:/etc/clickhouse-server
+      - ./ch-data:/var/lib/clickhouse
+      - ./ch-log:/var/log/clickhouse-server
