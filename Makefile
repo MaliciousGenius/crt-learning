@@ -4,8 +4,7 @@
 export NAME?=$(shell echo $(shell basename $(shell pwd)) | awk '{print tolower($0)}')
 
 # рантайм - цель по умолчанию
-$(NAME): clean image container
-	# @docker-compose exec $(NAME) /bin/bash
+$(NAME): image container
 
 # установить и запустить контейнер
 container:
@@ -23,6 +22,3 @@ clean:
 info:
 	@docker-compose logs
 	@docker-compose ps
-
-superset-init:
-	docker-compose exec superset superset-init
