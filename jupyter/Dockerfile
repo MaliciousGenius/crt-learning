@@ -19,7 +19,7 @@ RUN apt-get autoremove --yes ; \
     rm -rf /var/lib/apt/lists/* ;
 
 RUN pip install --upgrade pip ; \
-    pip install numpy pandas
+    pip install numpy pandas sqlalchemy ;
 
 # понижение привелегий
 USER $NB_UID

@@ -12,7 +12,7 @@ container:
 
 # собрать образ
 image:
-	@docker-compose build --force-rm --no-cache --pull $(NAME)
+	@docker-compose build
 
 # очистить
 clean:
