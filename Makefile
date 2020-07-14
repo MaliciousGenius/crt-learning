@@ -1,24 +1,17 @@
 .PHONY: *
 
-# переменные
 export NAME?=$(shell echo $(shell basename $(shell pwd)) | awk '{print tolower($0)}')
 
-# рантайм - цель по умолчанию
-$(NAME): image container
+$(NAME): image
+	@docker-compose up -d clickhouse
+	@docker-compose run $(NAME) /bin/bash
 
-# установить и запустить контейнер
-container:
-	@docker-compose up -d
-
-# собрать образ
 image:
-	@docker-compose build
+	@docker-compose build $(NAME)
 
-# очистить
-clean:
+down:
 	@docker-compose down
 
-# журнал & информация
 info:
 	@docker-compose logs
 	@docker-compose ps

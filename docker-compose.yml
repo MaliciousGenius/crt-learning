@@ -1,8 +1,8 @@
 version: '2.1'
 
-x-jupyter-build-opts: &x-jupyter-build-opts
+x-crt-learning-build-opts: &x-crt-learning-build-opts
   build:
-    context: ./jupyter
+    context: ./crt-learning
 
 x-logging-opts: &x-logging-opts
   logging:
@@ -13,22 +13,14 @@ x-logging-opts: &x-logging-opts
 
 services:
 
-  crt-learning:
-    <<: *x-jupyter-build-opts
-    <<: *x-logging-opts
-    image: jupyter/minimal-notebook
-    container_name: ${NAME}-jupyter
-    environment:
-      - JUPYTER_ENABLE_LAB=yes
-    ports:
-      - '8888:8888/tcp'
-    volumes:
-      - ./notebook:/home/jovyan
-
   clickhouse:
     <<: *x-logging-opts
     image: yandex/clickhouse-server
     container_name: ${NAME}-clickhouse
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
     ports:
       - '8123:8123/tcp'
       - '9000:9000/tcp'
@@ -36,12 +28,13 @@ services:
       - ./ch-conf:/etc/clickhouse-server
       - ./ch-data:/var/lib/clickhouse
       - ./ch-log:/var/log/clickhouse-server
-    ulimits:
-      nofile:
-        soft: 262144
-        hard: 262144
     healthcheck:
       test: "clickhouse-client --port=9000 --query='SELECT 1'"
       interval: 5s
       timeout: 30s
       retries: 10
+
+  crt-learning:
+    <<: *x-crt-learning-build-opts
+    <<: *x-logging-opts
+    container_name: ${NAME}

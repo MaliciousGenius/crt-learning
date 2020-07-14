@@ -1,3 +1,5 @@
 _mess
-notebook/.*
-notebook/input
+_old
+ch-data
+ch-log
+._*
