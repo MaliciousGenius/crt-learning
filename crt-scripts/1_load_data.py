@@ -15,7 +15,7 @@ import pandahouse as ph
 filelist = glob.glob(r'input/*/*.bz2', recursive=True)
 
 ch_conn_str = {
-    'host': 'http://' + os.environ.get('CLICKHOUSE_HOST') or 'localhost' + ':8123/',
+    'host': 'http://' + os.environ.get('CLICKHOUSE_HOST') + ':8123/',
     'database': 'default',
     'password': ''
 }
