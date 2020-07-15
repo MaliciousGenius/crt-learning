@@ -4,4 +4,6 @@ crt-scripts/input
 ch-data
 ch-log
 pr-data
+redis-data
+pg-data
 ._*

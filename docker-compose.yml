@@ -48,6 +48,48 @@ services:
       - ./pr-conf:/etc/prometheus:ro
       - ./pr-data:/prometheus:rw
 
+  redis:
+    <<: *x-logging-opts
+    image: redis
+    container_name: ${NAME}-redis
+    ports:
+      - '6379:6379/tcp'
+    volumes:
+      - ./redis-data:/data:rw
+
+  postgres:
+    <<: *x-logging-opts
+    image: postgres
+    container_name: ${NAME}-postgres
+    environment:
+      POSTGRES_DB: superset
+      POSTGRES_PASSWORD: superset
+      POSTGRES_USER: superset
+    ports:
+      - '5432:5432/tcp'
+    volumes:
+      - ./pg-data:/var/lib/postgresql/data
+
+  superset:
+    <<: *x-logging-opts
+    image: amancevice/superset
+    container_name: ${NAME}-superset
+    environment:
+      POSTGRES_DB: superset
+      POSTGRES_USER: superset
+      POSTGRES_PASSWORD: superset
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      SUPERSET_ENV: local
+    # command: ["flask", "run", "-p", "8088", "--with-threads", "--reload", "--debugger", "--host=0.0.0.0"]
+    ports:
+      - 8088:8088
+    depends_on:
+      - postgres
+      - redis
+
   crt-learning:
     <<: *x-crt-learning-build-opts
     <<: *x-logging-opts

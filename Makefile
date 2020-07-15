@@ -3,7 +3,7 @@
 export NAME?=$(shell echo $(shell basename $(shell pwd)) | awk '{print tolower($0)}')
 
 $(NAME): image
-	@docker-compose up -d clickhouse prometheus
+	@docker-compose up -d clickhouse prometheus redis postgres superset
 	@docker-compose run $(NAME) /bin/bash
 
 image:
@@ -16,3 +16,6 @@ clean:
 info:
 	@docker-compose logs
 	@docker-compose ps
+
+superset:
+	@docker-compose up -d superset
