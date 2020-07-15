@@ -88,7 +88,7 @@ if __name__ == "__main__":
         print('--------')
         print(filename)
         df = pd.read_csv(filename, compression='bz2', sep='\t', dtype='unicode', header=None, names=column_names)
-        ph.to_clickhouse(df, 'logs', index=False, chunksize=10000, connection=ch_conn_str)
+        ph.to_clickhouse(df, 'logs', index=False, chunksize=20000, connection=ch_conn_str)
         df.info(verbose=False)
         print (str(count))
         count=count+1
