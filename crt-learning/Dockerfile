@@ -24,11 +24,10 @@ RUN apt-get install --quiet --yes --no-install-recommends \
 RUN apt-get install --quiet --yes --no-install-recommends \
         python3-pip \
         python3-numpy \
-        python3-pandas \
-        python3-sqlalchemy python3-sqlalchemy ;
+        python3-pandas ;
 
 # установка clickhouse-driver
-RUN pip3 install clickhouse-driver 
+RUN pip3 install clickhouse-driver pandahouse
 
 # очистка кеша пакетного менеджера
 RUN apt-get autoremove --yes ; \

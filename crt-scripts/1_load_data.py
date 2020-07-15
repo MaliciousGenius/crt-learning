@@ -4,10 +4,13 @@
 Загрузка данных в CH
 """
 
-import glob
 import os
+import gc
+import glob
+import time
+
 import pandas as pd
-import sqlalchemy as sa
+import pandahouse as ph
 
 column_names = [
     'id',
@@ -69,14 +72,26 @@ column_names = [
     'source'
 ]
 
-def data_to_ch(connect):
-    filelist = glob.glob(r'input/*/*.bz2', recursive=True)
-    for filename in filelist:
-        df_s = pd.read_csv(filename, compression='bz2',sep='\t',dtype='unicode',header=None,names=column_names)
-        df_s.to_sql("events", con = connect, if_exists='append', index = False)
-        print(df_s.head())
+def to_ch(df, ch_host):
+    connection_str = {
+        'host': 'http://' + ch_host + ':8123/',
+        'database': 'default',
+        'password': ''
+        }
+    ph.to_clickhouse(df, 'logs', index=False, chunksize=10000, connection=connection_str)
 
 if __name__ == "__main__":
-    engine = sa.create_engine('clickhouse://default@192.168.0.155:8123/default', encoding='utf8')
-    connect = engine.connect()
-    data_to_ch(connect)
+    CLICKHOUSE_HOST = os.environ.get('CLICKHOUSE_HOST') or 'localhost'
+    filelist = glob.glob(r'input/*/*.bz2', recursive=True)
+    print(len(filelist))
+    count=1
+    for filename in filelist:
+        print('--------')
+        print(filename)
+        df = pd.read_csv(filename, compression='bz2', sep='\t', dtype='unicode', header=None, names=column_names)
+        to_ch(df, CLICKHOUSE_HOST)
+        df.info(verbose=False)
+        print (str(count))
+        count=count+1
+        gc.collect()
+        time.sleep(5)

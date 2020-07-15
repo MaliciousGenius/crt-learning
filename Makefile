@@ -3,7 +3,7 @@
 export NAME?=$(shell echo $(shell basename $(shell pwd)) | awk '{print tolower($0)}')
 
 $(NAME): image
-	@docker-compose up -d clickhouse
+	@docker-compose up -d clickhouse prometheus
 	@docker-compose run $(NAME) /bin/bash
 
 image:
@@ -11,7 +11,7 @@ image:
 
 clean:
 	@docker-compose down
-	@rm -rf ch-data ch-log ._ch-data ._ch-log
+	@rm -rf ch-data ch-log ._ch-data ._ch-log pr-data
 
 info:
 	@docker-compose logs

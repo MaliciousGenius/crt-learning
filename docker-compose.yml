@@ -24,19 +24,35 @@ services:
     ports:
       - '8123:8123/tcp'
       - '9000:9000/tcp'
+      - '9363:9363/tcp'
     volumes:
-      - ./ch-conf:/etc/clickhouse-server
-      - ./ch-data:/var/lib/clickhouse
-      - ./ch-log:/var/log/clickhouse-server
+      - ./ch-conf:/etc/clickhouse-server:ro
+      - ./ch-data:/var/lib/clickhouse:rw
+      - ./ch-log:/var/log/clickhouse-server:rw
     healthcheck:
       test: "clickhouse-client --port=9000 --query='SELECT 1'"
       interval: 5s
       timeout: 30s
       retries: 10
 
+  prometheus:
+    <<: *x-logging-opts
+    image: prom/prometheus
+    container_name: ${NAME}-prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    ports:
+      - '9090:9090/tcp'
+    volumes:
+      - ./pr-conf:/etc/prometheus:ro
+      - ./pr-data:/prometheus:rw
+
   crt-learning:
     <<: *x-crt-learning-build-opts
     <<: *x-logging-opts
     container_name: ${NAME}
+    environment:
+      - CLICKHOUSE_HOST=clickhouse
     volumes:
       - ./crt-scripts:/crt-scripts
