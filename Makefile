@@ -9,8 +9,9 @@ $(NAME): image
 image:
 	@docker-compose build $(NAME)
 
-down:
+clean:
 	@docker-compose down
+	@rm -rf ch-data ch-log ._ch-data ._ch-log
 
 info:
 	@docker-compose logs

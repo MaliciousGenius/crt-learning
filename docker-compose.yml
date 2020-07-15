@@ -38,3 +38,5 @@ services:
     <<: *x-crt-learning-build-opts
     <<: *x-logging-opts
     container_name: ${NAME}
+    volumes:
+      - ./crt-scripts:/crt-scripts

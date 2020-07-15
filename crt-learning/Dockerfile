@@ -18,10 +18,21 @@ RUN apt-get install --quiet --yes --no-install-recommends \
         ca-certificates \
         apt-transport-https \
         software-properties-common \
-        bash \
-        openssl ;
+        bash bash-completion ;
+
+# установка python 3 и его компонент
+RUN apt-get install --quiet --yes --no-install-recommends \
+        python3-pip \
+        python3-numpy \
+        python3-pandas \
+        python3-sqlalchemy python3-sqlalchemy ;
+
+# установка clickhouse-driver
+RUN pip3 install clickhouse-driver 
 
 # очистка кеша пакетного менеджера
 RUN apt-get autoremove --yes ; \
     apt-get clean ; \
     rm -rf /var/lib/apt/lists/* ;
+
+WORKDIR /crt-scripts
