@@ -12,6 +12,14 @@ import time
 import pandas as pd
 import pandahouse as ph
 
+filelist = glob.glob(r'input/*/*.bz2', recursive=True)
+
+ch_conn_str = {
+    'host': 'http://' + os.environ.get('CLICKHOUSE_HOST') or 'localhost' + ':8123/',
+    'database': 'default',
+    'password': ''
+}
+
 column_names = [
     'id',
     'type',
@@ -72,24 +80,15 @@ column_names = [
     'source'
 ]
 
-def to_ch(df, ch_host):
-    connection_str = {
-        'host': 'http://' + ch_host + ':8123/',
-        'database': 'default',
-        'password': ''
-        }
-    ph.to_clickhouse(df, 'logs', index=False, chunksize=10000, connection=connection_str)
-
 if __name__ == "__main__":
-    CLICKHOUSE_HOST = os.environ.get('CLICKHOUSE_HOST') or 'localhost'
-    filelist = glob.glob(r'input/*/*.bz2', recursive=True)
+
     print(len(filelist))
     count=1
     for filename in filelist:
         print('--------')
         print(filename)
         df = pd.read_csv(filename, compression='bz2', sep='\t', dtype='unicode', header=None, names=column_names)
-        to_ch(df, CLICKHOUSE_HOST)
+        ph.to_clickhouse(df, 'logs', index=False, chunksize=10000, connection=ch_conn_str)
         df.info(verbose=False)
         print (str(count))
         count=count+1
