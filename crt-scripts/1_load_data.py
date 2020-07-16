@@ -81,27 +81,11 @@ column_names = [
 ]
 
 if __name__ == "__main__":
-
-    print(len(filelist))
-    count=1
     for filename in filelist:
         print('--------')
-        print(filename)
         df = pd.read_csv(filename, compression='bz2', sep='\t', dtype='unicode', header=None, names=column_names)
         ph.to_clickhouse(df, 'logs', index=False, chunksize=20000, connection=ch_conn_str)
-        df.info(verbose=False)
-        print (str(count))
-        count=count+1
+
+        os.remove(filename)
         gc.collect()
         time.sleep(5)
-
-
-import os, shutil
-path = "/volume1/Users/Transfer/"
-moveto = "/volume1/Users/Drive_Transfer/"
-files = os.listdir(path)
-files.sort()
-for f in files:
-    src = path+f
-    dst = moveto+f
-    shutil.move(src,dst)
