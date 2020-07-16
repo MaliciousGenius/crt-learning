@@ -94,3 +94,14 @@ if __name__ == "__main__":
         count=count+1
         gc.collect()
         time.sleep(5)
+
+
+import os, shutil
+path = "/volume1/Users/Transfer/"
+moveto = "/volume1/Users/Drive_Transfer/"
+files = os.listdir(path)
+files.sort()
+for f in files:
+    src = path+f
+    dst = moveto+f
+    shutil.move(src,dst)
