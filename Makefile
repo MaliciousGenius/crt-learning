@@ -11,11 +11,14 @@ image:
 
 clean:
 	@docker-compose down
-	@rm -rf ch-data ch-log ._ch-data ._ch-log pr-data
+	@rm -rf ch-data ch-log ._ch-data ._ch-log pr-data pg-data ._pg-data redis-data ._redis-data
 
 info:
 	@docker-compose logs
 	@docker-compose ps
 
-superset:
+ss-u:
 	@docker-compose up -d superset
+
+ss-i:
+	@docker-compose exec superset superset-init
