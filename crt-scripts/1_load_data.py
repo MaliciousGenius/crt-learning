@@ -9,9 +9,12 @@ import gc
 import glob
 import time
 
+from multiprocessing import Process
+
 import pandas as pd
 import pandahouse as ph
 
+proclist = []
 filelist = glob.glob(r'input/*/*.bz2', recursive=True)
 
 ch_conn_str = {
@@ -80,12 +83,17 @@ column_names = [
     'source'
 ]
 
-if __name__ == "__main__":
-    for filename in filelist:
-        print('--------')
-        df = pd.read_csv(filename, compression='bz2', sep='\t', dtype='unicode', header=None, names=column_names)
-        ph.to_clickhouse(df, 'logs', index=False, chunksize=20000, connection=ch_conn_str)
+def load_task(filename):
+    df = pd.read_csv(filename, compression='bz2', sep='\t', dtype='unicode', header=None, names=column_names)
+    ph.to_clickhouse(df, 'logs', index=False, chunksize=20000, connection=ch_conn_str)
 
-        os.remove(filename)
-        gc.collect()
-        time.sleep(5)
+if __name__ == "__main__":
+    print(len(proclist))
+    # for filename in filelist:
+    #     print('--------')
+        
+        
+
+    #     os.remove(filename)
+    #     gc.collect()
+    #     time.sleep(5)
