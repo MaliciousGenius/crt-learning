@@ -11,7 +11,7 @@ image:
 
 clean:
 	@docker-compose down
-	@rm -rf ch-data ch-log ._ch-data ._ch-log pr-data pg-data ._pg-data redis-data ._redis-data
+#	@rm -rf ch-data ch-log ._ch-data ._ch-log pr-data pg-data ._pg-data redis-data ._redis-data
 
 info:
 	@docker-compose logs
