@@ -8,10 +8,11 @@ import os
 import gc
 import glob
 
+import multiprocessing as mp
 import pandas as pd
 import pandahouse as ph
 
-file_list = glob.glob(r'input/*/*.bz2', recursive=True)
+files = glob.glob(r'input/*/*.bz2', recursive=True)
 
 ch_conn_str = {
     'host': 'http://' + os.environ.get('CLICKHOUSE_HOST') + ':8123/',
@@ -79,14 +80,14 @@ column_names = [
     'source'
 ]
 
-def load_file(file_name):
-    print('-L>' + file_name)
-    df = pd.read_csv(file_name, compression='bz2', sep='\t', dtype='unicode', header=None, names=column_names)
-    ph.to_clickhouse(df, 'logs', index=False, chunksize=20000, connection=ch_conn_str)
-
-    print('-C>' + file_name)
+def loader(file):
+    print('Загружаю:' + file)
+    df = pd.read_csv(file, compression='bz2', sep='\t', dtype='unicode', header=None, names=column_names)
+    ph.to_clickhouse(df, 'events', index=False, chunksize=20000, connection=ch_conn_str)
     gc.collect()
 
 if __name__ == "__main__":
-    for file_name in file_list:
-        load_file(file_name)
+    pool = mp.Pool()
+    pool.map_async(loader, files)
+    pool.close()
+    pool.join()

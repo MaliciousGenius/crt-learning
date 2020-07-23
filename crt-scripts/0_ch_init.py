@@ -1,31 +1,24 @@
 #! /usr/bin/python3
 
 """
-Создание таблицы в CH
+Создание таблиц в CH
 """
-import os
 
+import os
 from clickhouse_driver import Client
 
-def create_logs_table(client):
-    with open('sql/create_logs_table.sql') as f:
-        query = f.read()
+def create_events_table(client):
+    with open('sql/create_events_table.sql') as sql_file:
+        query = sql_file.read()
         client.execute(query)
 
-def create_prep_table(client):
-    with open('sql/create_prep_table.sql') as f:
-        query = f.read()
-        client.execute(query)
-
-def create_prep_view(client):
-    with open('sql/create_prep_view.sql') as f:
-        query = f.read()
+def create_clks_view(client):
+    with open('sql/create_clks_view.sql') as sql_file:
+        query = sql_file.read()
         client.execute(query)
 
 if __name__ == "__main__":
     CLICKHOUSE_HOST = os.environ.get('CLICKHOUSE_HOST') or 'localhost'
     client = Client(CLICKHOUSE_HOST)
-    # create_logs_table(client)
-    # create_prep_table(client)
-    create_prep_view(client)
-
+    create_events_table(client)
+    create_clks_view(client)

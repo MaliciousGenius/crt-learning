@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS logs(
+CREATE TABLE IF NOT EXISTS events(
     `id` String,
     `type` String,
     `datetime` DateTime,

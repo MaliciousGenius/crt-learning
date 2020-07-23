@@ -48,3 +48,64 @@
     #     os.remove(filename)
     #     gc.collect()
     #     time.sleep(5)
+CREATE TABLE IF NOT EXISTS prep(
+    `id` String,
+    `type` String,
+    `datetime` DateTime,
+    `date` Date,
+    `ip` UInt32
+)
+ENGINE = MergeTree
+ORDER BY datetime
+
+CREATE MATERIALIZED VIEW IF NOT EXISTS clicks
+ENGINE = MergeTree
+(
+    `id` String,
+    `type` Enum8('imp' = 1, 'click' = 2),
+    `datetime` DateTime,
+    `date` Date,
+    `ip` UInt32
+)
+AS SELECT
+  id,
+  type,
+  datetime,
+  date,
+  IPv4StringToNum(ipAddress) AS ip
+FROM events
+WHERE type == 'clk'
+
+
+
+
+
+CREATE MATERIALIZED VIEW IF NOT EXISTS clickst
+(
+    `id` String,
+    `type` String,
+    `datetime` DateTime,
+    `date` Date
+)
+ENGINE = MergeTree() PARTITION BY toYYYYMM(datetime) ORDER BY tuple()
+AS SELECT 
+    id,
+    type,
+    datetime,
+    date
+FROM events
+
+ORDER BY datetime
+
+
+
+CREATE MATERIALIZED VIEW IF NOT EXISTS clicks
+ENGINE = MergeTree() PARTITION BY toYYYYMM(datetime) ORDER BY (datetime)
+AS SELECT
+  id,
+  type,
+  datetime,
+  date
+FROM events
+ORDER BY datetime
+
